@@ -4,6 +4,8 @@ const usernameField = document.getElementById("username");
 const passwordField = document.getElementById("password");
 const errorMessage = document.getElementById("errorMessage");
 
+
+
 const login = async () => {
     const userName = usernameField.value;
     const password = passwordField.value;
@@ -17,9 +19,12 @@ const login = async () => {
         });
         
         if (response.ok) {
-            // const data = await response.json();   // this is needed if the jwt comes in form of json and not as a cookie
-            // localStorage.setItem("jwt", data.token); // sames goes for this line
-            window.location.href = "home.html";
+            const data = await response.json();
+            if (data.role.includes("Admin")) {
+                window.location.href = "AdminDashboard.html";
+            } else {
+                window.location.href = "home.html";
+            }
         } else {
             errorMessage.innerHTML = "Invalid credentials";
             errorMessage.style.display = "block";
@@ -31,6 +36,13 @@ const login = async () => {
         errorMessage.style.display = "block";
     }
 };
+
+const autoLogIn = () => {
+    
+};
+
+// run at start
+autoLogIn();
 
 // event handlers
 loginForm.addEventListener(('submit'), async event => {
