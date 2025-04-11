@@ -1,3 +1,5 @@
+import { secure } from "/secure.js";
+
 // dom elements
 const loginForm = document.getElementById("loginForm");
 const usernameField = document.getElementById("username");
@@ -20,11 +22,7 @@ const login = async () => {
         
         if (response.ok) {
             const data = await response.json();
-            if (data.role.includes("Admin")) {
-                window.location.href = "AdminDashboard.html";
-            } else {
-                window.location.href = "home.html";
-            }
+            redirectBasedOnRoles(data.role);
         } else {
             errorMessage.innerHTML = "Invalid credentials";
             errorMessage.style.display = "block";
@@ -37,8 +35,25 @@ const login = async () => {
     }
 };
 
-const autoLogIn = () => {
-    
+const redirectBasedOnRoles = roles => {
+    if (Array.isArray(roles) && roles.includes("Admin")) {
+        window.location.href = "AdminDashboard.html";
+    } else {
+        window.location.href = "home.html";
+    }
+};
+
+const autoLogIn = async () => {
+    try {
+        const response = await secure();
+
+        if (response.ok) {
+            const data = await response.json();
+            redirectBasedOnRoles(data.role);
+        }
+    } catch (error) {
+        console.error("auto login failed:", error);
+    }
 };
 
 // run at start
